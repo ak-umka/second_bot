@@ -25,7 +25,6 @@ class AreaService {
     };
 
     async createImage(image, areaId) {
-        console.log(image, 'image')
         const area = await Area.findById({ _id: areaId });
         if (Array.isArray(image)) {
             const lastObject = image[image.length - 1];

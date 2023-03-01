@@ -72,6 +72,7 @@ const start = async () => {
     });
 
     bot.onText(/\/create/, async (msg) => {
+      await StopTimer(msg);
       bot.removeTextListener(/\/members/);
       bot.removeTextListener(/\/violation/);
       bot.removeTextListener(/\/stop/);
@@ -103,14 +104,11 @@ const start = async () => {
 
       bot.onText(/\/members/, async (msg) => {
         bot.sendMessage(msg.chat.id, 'Нажмите на кнопку', MemberOptionsButton(areaId[msg.from.id]));
-      }) // добавить для для второго бота
+      })
 
       bot.onText(/\/stop/, async (msg) => {
         await StopTimer(msg);
-      }); // добавить для для второго бота
-      // });
-
-      
+      });
     });
 
     bot.on('location', async (msg) => {
@@ -129,9 +127,7 @@ const start = async () => {
       });
 
       bot.onReplyToMessage(msg.chat.id, image.message_id, async (nameMsg) => {
-        console.log(nameMsg, 'nameMsgIMAGE');
         const image = nameMsg.photo || nameMsg.document;
-        console.log(image, 'image')
         await AreaService.createImage(image, areaObj._id);
         await bot.sendMessage(msg.chat.id, `Изображение сохранено`, {
           parse_mode: "HTML"
@@ -140,6 +136,8 @@ const start = async () => {
 
       TimerController(bot, msg, areaObj);
     });
+
+
 
     CallbackQuery(bot); // добавить для для второго бота
 

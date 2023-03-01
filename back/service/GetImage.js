@@ -8,6 +8,7 @@ const urlPathInfo = `https://api.telegram.org/5928167599:AAGjlw6lyVfwuN0rIh_nVR6
 const urlPathGetImage = `https://api.telegram.org/file/5928167599:AAGjlw6lyVfwuN0rIh_nVR6kg2QUm-4kGj8/`;
 
 const path = '/Users/umka/Desktop/tg-back-front/back/public/images/';
+const ubuntuPath = '/home/ubuntu/tg-back-front/back/public/images/';
 class GetImageService {
   async getImage() {
     const areas = await Area.find().populate('members').populate('violation');
@@ -17,7 +18,7 @@ class GetImageService {
         continue;
       }
 
-      if (await checkImage(path + areaImage + '.jpg')) {
+      if (await checkImage(ubuntuPath + areaImage + '.jpg')) {
         continue;
       }
 
@@ -39,7 +40,7 @@ class GetImageService {
         if (violationImage === undefined) {
           continue;
         }
-        if (await checkImage(path + 'Violation/' + violationImage + '.jpg')) {
+        if (await checkImage(ubuntuPath + 'Violation/' + violationImage + '.jpg')) {
           continue;
         }
         const response = await axios.get(urlPathInfo + violationImage);
