@@ -53,6 +53,7 @@ const start = async () => {
     ]);
 
     const nameUser = {};
+    let areaId = {};
 
     bot.onText(/\/start/, async (msg) => {
       bot.sendMessage(msg.chat.id, messageHelper(msg), {
@@ -70,82 +71,75 @@ const start = async () => {
       });
     });
 
-    // bot.on('location', async (msg) => {
-    //   console.log(msg, 'msgLOCATION');
-    // })
-
     bot.onText(/\/create/, async (msg) => {
-      // const fullname = await bot.sendMessage(msg.chat.id, "Введите ФИО", {
-      //   reply_markup: {
-      //     force_reply: true,
-      //   }
-      // });
-      // bot.onReplyToMessage(msg.chat.id, fullname.message_id, async (nameMsg) => {
-      // const name = nameMsg.text;
+      bot.removeTextListener(/\/members/);
+      bot.removeTextListener(/\/violation/);
+      bot.removeTextListener(/\/stop/);
+      // console.log(areaId, 'areaId')
+      areaId = {};
+      // console.log(areaId, 'areaId222222222')
 
-      const area = await bot.sendMessage(msg.chat.id, "Адрес участка", locationButton());
+      await bot.sendMessage(msg.chat.id, "Адрес участка", locationButton());
 
-
-      bot.onReplyToMessage(msg.chat.id, area.message_id, async (nameMsg) => {
-        console.log(nameMsg, 'nameMsgLOCATION');
-        const location = nameMsg.location;
-
-        const name = nameUser[msg.from.id];
-        const areaObj = await AreaService.createArea(name, location, msg.from.username);
-        await bot.sendMessage(msg.chat.id, `Адрес сохранен`, {
-          parse_mode: "HTML"
+      bot.onText(/\/violation/, async (msg) => {
+        const violation = await bot.sendMessage(msg.chat.id, "Фотогрфия отчета", {
+          reply_markup: { force_reply: true },
         });
-        const image = await bot.sendMessage(msg.chat.id, "Отправьте фото", {
-          reply_markup: {
-            force_reply: true,
-          },
-        });
-
-        bot.onReplyToMessage(msg.chat.id, image.message_id, async (nameMsg) => {
-          console.log(nameMsg, 'nameMsgIMAGE');
-          const image = nameMsg.photo || nameMsg.document;
-          console.log(image, 'image')
-          await AreaService.createImage(image, areaObj._id);
-          await bot.sendMessage(msg.chat.id, `Изображение сохранено`, {
-            parse_mode: "HTML"
-          });
-          await bot.sendMessage(msg.chat.id, 'Нажмите на кнопку', MemberOptionsButton(areaObj._id)); // добавить для для второго бота
-        });
-
-        TimerController(bot, msg, areaObj); // добавить для для второго бота
-
-        bot.onText(/\/violation/, async (msg) => {
-          const violation = await bot.sendMessage(msg.chat.id, "Фотогрфия отчета", {
+        bot.onReplyToMessage(msg.chat.id, violation.message_id, async (nameMsg) => {
+          const violationImage = nameMsg.photo || nameMsg.document;
+          console.log(violationImage, 'violationImage');
+          await AreaService.createViolationImage(violationImage, areaId[msg.from.id]);
+          await bot.sendMessage(msg.chat.id, `Изображение сохранено`);
+          const violationText = await bot.sendMessage(msg.chat.id, "Описание отчета", {
             reply_markup: { force_reply: true },
           });
-          bot.onReplyToMessage(msg.chat.id, violation.message_id, async (nameMsg) => {
-            const violationImage = nameMsg.photo || nameMsg.document;
-            console.log(violationImage, 'violationImage');
-            await AreaService.createViolationImage(violationImage, areaObj._id);
-            await bot.sendMessage(msg.chat.id, `Изображение сохранено`);
-            const violationText = await bot.sendMessage(msg.chat.id, "Описание отчета", {
-              reply_markup: { force_reply: true },
-            });
-            bot.onReplyToMessage(msg.chat.id, violationText.message_id, async (nameMsg) => {
-              const violationText = nameMsg.text;
-              await AreaService.createViolationDescription(violationText, areaObj._id);
-              await bot.sendMessage(msg.chat.id, `Сохранено`);
-            });
+          bot.onReplyToMessage(msg.chat.id, violationText.message_id, async (nameMsg) => {
+            const violationText = nameMsg.text;
+            await AreaService.createViolationDescription(violationText, areaId[msg.from.id]);
+            await bot.sendMessage(msg.chat.id, `Сохранено`);
           });
         });
-
-        bot.onText(/\/members/, async (msg) => {
-          await bot.sendMessage(msg.chat.id, 'Нажмите на кнопку', MemberOptionsButton(areaObj._id));
-        }) // добавить для для второго бота
-
-        bot.onText(/\/stop/, async (msg) => {
-          await StopTimer(msg);
-        }); // добавить для для второго бота
-
       });
 
+      bot.onText(/\/members/, async (msg) => {
+        bot.sendMessage(msg.chat.id, 'Нажмите на кнопку', MemberOptionsButton(areaId[msg.from.id]));
+      }) // добавить для для второго бота
+
+      bot.onText(/\/stop/, async (msg) => {
+        await StopTimer(msg);
+      }); // добавить для для второго бота
+      // });
+
+      
     });
 
+    bot.on('location', async (msg) => {
+      const location = msg.location;
+      const name = nameUser[msg.from.id];
+      const areaObj = await AreaService.createArea(name, location, msg.from.username);
+      areaId[msg.from.id] = areaObj._id;
+      console.log(areaId, 'areaIdlocation')
+      await bot.sendMessage(msg.chat.id, `Адрес сохранен`, {
+        parse_mode: "HTML"
+      });
+      const image = await bot.sendMessage(msg.chat.id, "Отправьте фото", {
+        reply_markup: {
+          force_reply: true,
+        },
+      });
+
+      bot.onReplyToMessage(msg.chat.id, image.message_id, async (nameMsg) => {
+        console.log(nameMsg, 'nameMsgIMAGE');
+        const image = nameMsg.photo || nameMsg.document;
+        console.log(image, 'image')
+        await AreaService.createImage(image, areaObj._id);
+        await bot.sendMessage(msg.chat.id, `Изображение сохранено`, {
+          parse_mode: "HTML"
+        });
+      });
+
+      TimerController(bot, msg, areaObj);
+    });
 
     CallbackQuery(bot); // добавить для для второго бота
 
