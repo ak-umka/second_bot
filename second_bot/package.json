@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js --port 3003", 
-    "sec:tg": "pm2 start index.js",
+    "sec:tg": "pm2 start index.js --name sec:tg", 
     "stop": "pm2 stop index.js",
     "logs": "pm2 logs"
   },

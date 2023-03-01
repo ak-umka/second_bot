@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "sec:back": "pm2 start index.js",
+    "sec:back": "pm2 start index.js --name sec:back",
     "stop": "pm2 stop index.js",
     "logs": "pm2 logs"
   },
