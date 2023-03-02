@@ -6,7 +6,7 @@ const CallbackQuery = (bot) => {
     const chatId = query.message.chat.id;
     console.log(data, 'data-callback-query')
 
-    const members = await bot.sendMessage(chatId, "Укажите количество участников", {
+    const members = await bot.sendMessage(chatId, "Введите количество новых проголосовавших изберателей", {
       reply_markup: {
         force_reply: true,
       }
