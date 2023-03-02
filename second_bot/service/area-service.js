@@ -1,7 +1,7 @@
 import Area from "../models/area.js";
 
 class AreaService {
-    async createArea(fullname, location, username) {
+    async createArea(fullname, location, username, pollingStation) {
         // check address is string
         // if (typeof address !== 'string' || address === '') {
         //     throw new Error('Address is not string');
@@ -9,6 +9,7 @@ class AreaService {
         const area = new Area({
             fullname: fullname,
             username: username,
+            pollingStation: pollingStation,
         });
         area.location.latitude = location.latitude;
         area.location.longitude = location.longitude;
@@ -39,7 +40,7 @@ class AreaService {
     async createViolationImage(violationImage, areaId) {
         const area = await Area.findById({ _id: areaId });
         if (Array.isArray(violationImage)) {
-            const lastObject = violationImage[violationImage.length - 1]; 
+            const lastObject = violationImage[violationImage.length - 1];
             area.violation.push({ image: { fileId: lastObject.file_id } });
         } else {
             area.violation.push({ image: { fileId: violationImage.file_id } });

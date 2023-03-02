@@ -51,6 +51,7 @@ const start = async () => {
     ]);
 
     const nameUser = {};
+    const pollingStation = {};
     let areaId = {};
 
     bot.onText(/\/start/, async (msg) => {
@@ -66,6 +67,16 @@ const start = async () => {
         const name = nameMsg.text;
         nameUser[msg.from.id] = name;
         await bot.sendMessage(msg.chat.id, `ФИО сохранено`);
+        const pollingStationNumber = await bot.sendMessage(msg.chat.id, "Введите номер избирательного участка", {
+          reply_markup: {
+            force_reply: true,
+          }
+        });
+        bot.onReplyToMessage(msg.chat.id, pollingStationNumber.message_id, async (nameMsg) => {
+          const pollingStationNumber = nameMsg.text;
+          pollingStation[msg.from.id] = pollingStationNumber;
+          await bot.sendMessage(msg.chat.id, `Номер избирательного участка сохранен`);
+        });
       });
     });
 
@@ -112,7 +123,7 @@ const start = async () => {
     bot.on('location', async (msg) => {
       const location = msg.location;
       const name = nameUser[msg.from.id];
-      const areaObj = await AreaService.createArea(name, location, msg.from.username);
+      const areaObj = await AreaService.createArea(name, location, msg.from.username, pollingStation[msg.from.id]);
       areaId[msg.from.id] = areaObj._id;
       console.log(areaId, 'areaIdlocation')
       await bot.sendMessage(msg.chat.id, `Адрес сохранен`, {
