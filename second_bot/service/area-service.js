@@ -40,12 +40,13 @@ class AreaService {
 
     async createViolationImage(violationImage, areaId) {
         const area = await Area.findById({ _id: areaId });
-        if (Array.isArray(violationImage)) {
-            const lastObject = violationImage[violationImage.length - 1];
-            area.violation.push({ image: { fileId: lastObject.file_id } });
-        } else {
-            area.violation.push({ image: { fileId: violationImage.file_id } });
-        }
+        // if (Array.isArray(violationImage)) {
+        //     const lastObject = violationImage[violationImage.length - 1];
+        //     area.violation.push({ image: { fileId: lastObject.file_id } });
+        // } else {
+        //     area.violation.push({ image: { fileId: violationImage.file_id } });
+        // }
+        area.violation.push({ image: { fileId: violationImage } });
         await area.save();
         return area;
     }

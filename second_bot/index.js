@@ -96,9 +96,11 @@ const start = async () => {
           reply_markup: { force_reply: true },
         });
         bot.onReplyToMessage(msg.chat.id, violation.message_id, async (nameMsg) => {
-          const violationImage = nameMsg.photo || nameMsg.document;
-          console.log(violationImage, 'violationImage');
-          await AreaService.createViolationImage(violationImage, areaId[msg.from.id]);
+          const image = nameMsg.photo || nameMsg.document;
+          const photoId = image[image.length - 1].file_id;
+          const photoUrl = await bot.getFileLink(photoId);
+          
+          await AreaService.createViolationImage(photoUrl, areaId[msg.from.id]);
           await bot.sendMessage(msg.chat.id, `Изображение сохранено`);
           const violationText = await bot.sendMessage(msg.chat.id, "Описание отчета", {
             reply_markup: { force_reply: true },
@@ -139,7 +141,6 @@ const start = async () => {
         const image = nameMsg.photo || nameMsg.document;
         const photoId = image[image.length - 1].file_id;
         const photoUrl = await bot.getFileLink(photoId);
-        
         await AreaService.createImage(photoUrl, areaObj._id);
         await bot.sendMessage(msg.chat.id, `Изображение сохранено`, {
           parse_mode: "HTML"
