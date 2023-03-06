@@ -85,9 +85,15 @@ const start = async () => {
       bot.removeTextListener(/\/members/);
       bot.removeTextListener(/\/violation/);
       bot.removeTextListener(/\/stop/);
-      // console.log(areaId, 'areaId')
       areaId = {};
-      // console.log(areaId, 'areaId222222222')
+      if (!nameUser[msg.from.id]) {
+        await bot.sendMessage(msg.chat.id, "Имя не найдено, чтобы создать участок вы должны нажать на /start", {
+          reply_markup: {
+            force_reply: true,
+          }
+        });
+        return;
+      }
 
       await bot.sendMessage(msg.chat.id, "Адрес участка", locationButton());
 
@@ -99,7 +105,7 @@ const start = async () => {
           const image = nameMsg.photo || nameMsg.document;
           const photoId = image[image.length - 1].file_id;
           const photoUrl = await bot.getFileLink(photoId);
-          
+
           await AreaService.createViolationImage(photoUrl, areaId[msg.from.id]);
           await bot.sendMessage(msg.chat.id, `Изображение сохранено`);
           const violationText = await bot.sendMessage(msg.chat.id, "Описание отчета", {
