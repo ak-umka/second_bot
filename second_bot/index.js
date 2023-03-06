@@ -87,11 +87,7 @@ const start = async () => {
       bot.removeTextListener(/\/stop/);
       areaId = {};
       if (!nameUser[msg.from.id]) {
-        await bot.sendMessage(msg.chat.id, "Имя не найдено, чтобы создать участок вы должны нажать на /start", {
-          reply_markup: {
-            force_reply: true,
-          }
-        });
+        await bot.sendMessage(msg.chat.id, "Имя не найдено, чтобы создать участок вы должны нажать на /start");
         return;
       }
 
