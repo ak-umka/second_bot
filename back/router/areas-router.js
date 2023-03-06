@@ -7,6 +7,7 @@ import AreaController from "../controller/area-controller.js";
 const router = new Router();
 
 router.get("/areas", express.json(), AreaController.getAllAreas);
+router.get("/areas/:area", express.json(), AreaController.getArea);
 router.get("/images", express.json(), AreaController.getAreaImage);
 router.get("/violation", express.json(), AreaController.getViolationImage);
 router.get("/search", express.json(), AreaController.searchArea);

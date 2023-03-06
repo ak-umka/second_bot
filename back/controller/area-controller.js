@@ -5,9 +5,41 @@ class AreaController {
     async getAllAreas(req, res) {
         try {
             const location = await AreaServiceLocation.getAllAreaLocation();
+            // const page = parseInt(req.query.page) || 1;
+            // const limit = parseInt(req.query.limit) || 10;
+
+            // const startIndex = (page - 1) * limit;
+            // const endIndex = page * limit;
+
+            // const results = {};
+
+            // if (endIndex < location.length) {
+            //     results.next = {
+            //         page: page + 1,
+            //         limit: limit
+            //     };
+            // }
+
+            // if (startIndex > 0) {
+            //     results.previous = {
+            //         page: page - 1,
+            //         limit: limit
+            //     };
+            // }
+
+            // results.results = location.slice(startIndex, endIndex);
+            // res.status(200).json(results);
             res.status(200).json(location);
         } catch (error) {
             console.log(error);
+        }
+    }
+    async getArea(req, res) {
+        try {
+            const area = await AreaServiceLocation.getByArea(req.params.area);
+            res.status(200).json(area);
+        } catch (error) {
+            console.log(error)
         }
     }
     async getAreaImage(req, res) {

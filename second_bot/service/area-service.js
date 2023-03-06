@@ -27,12 +27,13 @@ class AreaService {
 
     async createImage(image, areaId) {
         const area = await Area.findById({ _id: areaId });
-        if (Array.isArray(image)) {
-            const lastObject = image[image.length - 1];
-            area.images.fileId = lastObject.file_id;
-        } else {
-            area.images.fileId = image.file_id;
-        }
+        // if (Array.isArray(image)) {
+        //     const lastObject = image[image.length - 1];
+        //     area.images.fileId = lastObject.file_id;
+        // } else {
+        //     area.images.fileId = image.file_id;
+        // }
+        area.images.fileId = image;
         await area.save();
         return area;
     };

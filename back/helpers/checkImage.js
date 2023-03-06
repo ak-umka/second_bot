@@ -1,9 +1,12 @@
-import { access, constants } from 'node:fs/promises';
+import fs from 'node:fs';
 
 export const checkImage = async (path) => {
   try {
-    await access(path, constants.R_OK | constants.W_OK);
-    return true;
+    if (fs.existsSync(path)) {
+      return true;
+    } else {
+      return false;
+    }
   } catch (error) {
     console.log(error);
   }

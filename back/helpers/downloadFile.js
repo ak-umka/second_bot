@@ -6,14 +6,18 @@ import axios from 'axios';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const downloadFile = async (name, fileUrl, downloadFolder) => {
+const downloadFile = async (fileUrl, downloadFolder) => {
+  console.log('fileUrl', fileUrl)
+  // from https://api.telegram.org/file/bot5928167599:AAGjlw6lyVfwuN0rIh_nVR6kg2QUm-4kGj8/photos/file_9.jpg to file_9.jpg 
+  const name = fileUrl.split('/').pop()
   // Get the file name
-  let type = fileUrl.split('.').pop();
+  // let type = fileUrl.split('.').pop();
 
-  const fileName = path.basename(name + '.' + type); // до 01.02.2023 было так 
-  // const fileName = path.basename(name + '.' + 'jpg');
+  // const fileName = path.basename(name + '.' + type); // до 01.02.2023 было так 
+  const fileName = path.basename(name);
 
   // The path of the downloaded file on our machine
+  // const localFilePath = path.resolve(__dirname, downloadFolder, fileName);
   const localFilePath = path.resolve(__dirname, downloadFolder, fileName);
   try {
     const response = await axios({

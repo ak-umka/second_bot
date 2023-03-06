@@ -80,6 +80,22 @@ class AreaServiceLocation {
             console.log(error)
         }
     }
+    async getByArea(area) {
+        try {
+            const areas = await Area.find()
+            if (!areas) {
+                return null;
+            }
+            const areaLocation = areas.filter(areaItem => areaItem.fullLocation.locality === area);
+            if (areaLocation.length === 0) {
+                const areaLocation = areas.filter(areaItem => areaItem.fullLocation.formatted_address.includes(area));
+                return areaLocation;
+            }
+            return areaLocation;
+        } catch (error) {
+            console.log(error)
+        }
+    }
 }
 
 export default new AreaServiceLocation();
