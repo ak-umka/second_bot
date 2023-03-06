@@ -88,7 +88,7 @@ class AreaServiceLocation {
             }
             const areaLocation = areas.filter(areaItem => areaItem.fullLocation.locality === area);
             if (areaLocation.length === 0) {
-                const areaLocation = areas.filter(areaItem => areaItem.fullLocation.formatted_address.includes(area));
+                const areaLocation = areas.filter(areaItem => areaItem.fullLocation.formatted_address?.includes(area));
                 return areaLocation;
             }
             return areaLocation;
