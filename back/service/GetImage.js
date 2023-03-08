@@ -6,8 +6,8 @@ import { checkImage } from '../helpers/checkImage.js';
 
 const urlPathInfo = `https://api.telegram.org/bot5928167599:AAGjlw6lyVfwuN0rIh_nVR6kg2QUm-4kGj8/getFile?file_id=`;
 const urlPathGetImage = `https://api.telegram.org/file/bot5928167599:AAGjlw6lyVfwuN0rIh_nVR6kg2QUm-4kGj8/`;
-const path = '/Users/umbet/OneDrive/Desktop/smtp-tg-bot/back/public/images/';
-// const path = '/home/ubuntu/smtp-tg-bot/back/public/images/';
+// const path = '/Users/umbet/OneDrive/Desktop/smtp-tg-bot/back/public/images/';
+const path = '/home/ubuntu/smtp-tg-bot/back/public/images/';
 class GetImageService {
   async getImage() {
     const areas = await Area.find().populate('members').populate('violation');
