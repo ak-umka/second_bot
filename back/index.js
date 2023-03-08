@@ -15,7 +15,9 @@ app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.static('public'));
-app.use('/images', express.static('images'));
+app.use('/images', express.static('images'), (req, res) => {
+    res.status(404).redirect('/images/no_artist.png');
+});
 
 app.use('/api/v0', areasRouter);
 

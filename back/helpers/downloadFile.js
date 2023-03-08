@@ -24,14 +24,22 @@ const downloadFile = async (fileUrl, downloadFolder) => {
       method: 'GET',
       url: fileUrl,
       responseType: 'stream',
-    });
+    })
 
     const w = response.data.pipe(fs.createWriteStream(localFilePath));
     w.on('finish', () => {
       console.log('Successfully downloaded file!');
     });
   } catch (err) {
-    throw new Error(err);
+    if (err.response.status === 404) {
+      console.log('File not found');
+      // download file from another server 
+      // const response = await axios({
+      //   method: 'GET',
+      //   url: 'https://api.telegram.org/file/bot5928167599:AAGjlw6lyVfwuN0rIh_nVR6kg2QUm-4kGj8/photos/file_9.jpg',
+    } else {
+      console.log('Error', err.message);
+    }
   }
 };
 
