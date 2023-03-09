@@ -13,6 +13,9 @@ class GetImageService {
     const areas = await Area.find().populate('members').populate('violation');
     for (let i = 0; i < areas.length; i++) {
       const areaImage = areas[i].images?.fileId;
+      if (areaImage === undefined) {
+        continue;
+      }
       const name = areaImage.split('/').pop(); // from https://api.telegram.org/file/bot5928167599:AAGjlw6lyVfwuN0rIh_nVR6kg2QUm-4kGj8/photos/file_9.jpg to file_9.jpg
       if (areaImage === undefined) {
         continue;
