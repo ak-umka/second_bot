@@ -99,7 +99,7 @@ const start = async () => {
         });
         bot.onReplyToMessage(msg.chat.id, violation.message_id, async (nameMsg) => {
           const image = nameMsg.photo || nameMsg.document;
-          const photoId = image[image.length - 1].file_id;
+          const photoId = image[image.length - 1].file_id || image.file_id;
           const photoUrl = await bot.getFileLink(photoId);
 
           await AreaService.createViolationImage(photoUrl, areaId[msg.from.id]);
@@ -141,7 +141,7 @@ const start = async () => {
 
       bot.onReplyToMessage(msg.chat.id, image.message_id, async (nameMsg) => {
         const image = nameMsg.photo || nameMsg.document;
-        const photoId = image[image.length - 1].file_id;
+        const photoId = image[image.length - 1].file_id || image.file_id;
         const photoUrl = await bot.getFileLink(photoId);
         await AreaService.createImage(photoUrl, areaObj._id);
         await bot.sendMessage(msg.chat.id, `Изображение сохранено`, {
