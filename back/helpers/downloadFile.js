@@ -31,7 +31,7 @@ const downloadFile = async (fileUrl, downloadFolder) => {
       console.log('Successfully downloaded file!');
     });
   } catch (err) {
-    if (err.response.status === 404) {
+    if (err?.response?.status === 404) {
       console.log('File not found');
       // download file from another server 
       // const response = await axios({

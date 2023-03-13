@@ -96,6 +96,15 @@ class AreaServiceLocation {
             console.log(error)
         }
     }
+
+    async deleteById(id) {
+        try {
+            const area = await Area.findByIdAndDelete(id);
+            return area;
+        } catch (error) {
+            console.log(error)
+        }
+    }
 }
 
 export default new AreaServiceLocation();

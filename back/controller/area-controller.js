@@ -76,6 +76,14 @@ class AreaController {
             console.log(error);
         }
     }
+    async deleteArea(req, res) {
+        try {
+            const area = await AreaServiceLocation.deleteById(req.params.id);
+            res.status(200).json(area);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
 
 export default new AreaController();
