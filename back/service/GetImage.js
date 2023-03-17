@@ -56,6 +56,8 @@ class GetImageService {
       }
     }
   }
+
+  async getImageByArea() { }
 }
 
 export default new GetImageService();
