@@ -42,6 +42,7 @@ class AreaController {
             console.log(error)
         }
     }
+
     async getAreaImage(req, res) {
         try {
             await GetImageService.getImage();
@@ -50,6 +51,15 @@ class AreaController {
             console.log(error);
         }
     }
+    async getAreaImageByArea(req, res) {
+        try {
+            await GetImageService.getImageByArea(req.params.area);
+            res.status(200).json("ok");
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async getViolationImage(req, res) {
         try {
             await GetImageService.getViolationImage();
@@ -58,6 +68,16 @@ class AreaController {
             console.log(error);
         }
     }
+    async getViolationImageByArea(req, res) {
+        try {
+            await GetImageService.getViolationImageByArea(req.params.area);
+            res.status(200).json("ok");
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
     async searchArea(req, res) {
         try {
             const userQuery = await req.query;

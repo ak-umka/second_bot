@@ -57,7 +57,61 @@ class GetImageService {
     }
   }
 
-  async getImageByArea() { }
+  async getViolationImageByArea(area) {
+    try {
+      const areasId = await Area.find()
+      if (areasId.length === 0) {
+        return null;
+      }
+      const areaLocation = areasId.filter(areaItem => areaItem.fullLocation.formatted_address?.includes(area));
+
+      for (let i = 0; i < areaLocation.length; i++) {
+        const areaViolation = areas[i].violation;
+        for (let j = 0; j < areaViolation.length; j++) {
+          const violationImage = areaViolation[j].image?.fileId;
+          const name = violationImage.split('/').pop()
+          if (violationImage === undefined) {
+            continue;
+          }
+          if (await checkImage(path + 'Violation/' + name)) {
+            continue;
+          }
+
+          await downloadFile(violationImage, '../public/images/Violation');
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getImageByArea(area) {
+    try {
+      const areasId = await Area.find()
+      if (areasId.length === 0) {
+        return null;
+      }
+      const areaLocation = areasId.filter(areaItem => areaItem.fullLocation.formatted_address?.includes(area));
+
+      for (let i = 0; i < areaLocation.length; i++) {
+        const areaImage = areaLocation[i].images?.fileId;
+        if (areaImage === undefined) {
+          continue;
+        }
+        const name = areaImage.split('/').pop();
+        if (await checkImage(path + name)) {
+          continue;
+        }
+        // const response = await axios.get(urlPathInfo + areaImage);
+        // if (response.data.ok === false) {
+        //   continue;
+        // }
+        await downloadFile(areaImage, '../public/images');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default new GetImageService();

@@ -78,11 +78,31 @@ export const useStore = defineStore('areas', {
       }
     },
 
+    async getAreaImageByLocality(area) {
+      try {
+        const response = await axios.get(url + "images/" + area);
+        this.areasImage = response.data;
+        return response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     async getViolationsImage() {
       try {
         const response = await axios.get(url + "violation");
         this.violationImage = response.data;
         console.log(response.data, 'store Violation image');
+        return response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async getViolationsImageByLocality(area) {
+      try {
+        const response = await axios.get(url + "violation/" + area);
+        this.violationImage = response.data;
         return response.data;
       } catch (error) {
         console.log(error);
