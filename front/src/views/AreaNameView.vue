@@ -8,9 +8,9 @@
                 :count="areasArray.totalCountViolation"
             />
             <BarChart
-                v-if="areasArray"
-                :area="areasArray.areasArray"
-                :count="areasArray.totalMembers"
+                v-if="areasMembers"
+                :area="areasMembers.areasArray"
+                :count="areasMembers.totalMembers"
             />
         </div>
 
@@ -54,6 +54,7 @@
                                         <img
                                             class="w-10 h-10 rounded-full"
                                             :src="getAreasImage(area?.images?.fileId)"
+                                            onerror="this.onerror=null; this.src='https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';"
                                             alt=""
                                         />
                                     </div>
@@ -92,26 +93,6 @@
         <div v-else>
             <AtomSpinner />
         </div>
-
-        <!-- <div v-if="isLoading">
-      <div v-if="areasId.length">
-        <div class="grid grid-cols-5 gap-4 pt-6 sm:grid-cols-4">
-          <div v-for="(area, index) in areasId" :key="index">
-            <AreaCard :area="area" :res="areaImage" />
-          </div>
-        </div>
-      </div>
-      <div v-else class="text-2xl">Пусто</div>
-    </div>
-    <div v-else>
-      <AtomSpinner />
-    </div> -->
-
-        <!-- <div class="grid grid-cols-5 gap-4 pt-6 sm:grid-cols-4">
-      <div v-for="(area, index) in allArea" :key="index">
-        <AreaCard :area="area" :res="areaImage" />
-      </div>
-    </div> -->
     </div>
 </template>
 
@@ -129,15 +110,10 @@ const { telegramLink, date, generalCount } = useTable();
 
 onBeforeMount(async () => {
     await store.getAreaByLocality(route.params.id);
-    await store.getAreaImageByLocality(route.params.id);
 });
 
-// const allArea = computed(() => store.areas); // потом удалить после того как будем получать локации из талдыка или еще где то
 
 const areasId = computed(() => store.areaByLocality);
-
-// const areasId = computed(() => store.getLocalityById(route.params.id));
-const areaImage = computed(() => store.areasImage);
 
 const isLoading = ref(false);
 
@@ -156,39 +132,59 @@ const areasArray = computed(() => {
     if (sortAreas.value !== undefined) {
         if (sortAreas.value.length === 0) return;
         let areasArray = [];
-        let totalMembers = [];
         let totalCountViolation = [];
 
         for (let i = 0; i < sortAreas.value.length; i++) {
             if (sortAreas.value[i].fullname === undefined) {
                 sortAreas.value[i].fullname = "Нет";
             }
+
             if (!areasArray.includes(sortAreas.value[i].fullname)) {
                 areasArray.push(sortAreas.value[i].fullname);
                 if (sortAreas.value[i].violation.length) {
                     totalCountViolation.push(sortAreas.value[i].violation.length);
                 }
                 if (sortAreas.value[i].violation.length === 0) {
-                    totalCountViolation.push(0);
+                    areasArray.pop();
+                    continue;
                 }
-
-                let total = 0;
-                for (let j = 0; j < sortAreas.value[i].members.length; j++) {
-                    if (sortAreas.value[i].members[j].count === undefined) {
-                        sortAreas.value[i].members[j].count = 0;
-                    }
-                    total += sortAreas.value[i].members[j].count;
-                }
-                totalMembers.push(total);
             }
         }
-        return { areasArray, totalCountViolation, totalMembers };
+        return { areasArray, totalCountViolation };
+    }
+});
+
+const areasMembers = computed(() => {
+    if (areasArray.value !== undefined) {
+        if (sortAreas.value.length === 0) return;
+        let areasArray = [];
+        let totalMembers = [];
+        for (let i = 0; i < sortAreas.value.length; i++) {
+            if (sortAreas.value[i].fullname === undefined) {
+                sortAreas.value[i].fullname = "Нет";
+            }
+            let total = 0;
+            areasArray.push(sortAreas.value[i].fullname);
+            for (let j = 0; j < sortAreas.value[i].members.length; j++) {
+                if (sortAreas.value[i].members[j].count === undefined) {
+                    sortAreas.value[i].members[j].count = 0;
+                }
+                total += sortAreas.value[i].members[j].count;
+            }
+            if (total === 0) {
+                areasArray.pop();
+                continue;
+            }
+            totalMembers.push(total);
+        }
+        return { areasArray, totalMembers };
     }
 });
 
 const getAreasImage = (fileId) => {
     const name = fileId?.split("/").pop();
-    return import.meta.env.VITE_API_URL + `images/${name}`;
+    if (!name) return "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+    return import.meta.env.VITE_API_S3_BUCKET + `${name}`;
 };
 
 console.log(route.params.id, "areasId");

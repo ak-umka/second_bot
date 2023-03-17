@@ -3,12 +3,11 @@ import axios from "axios";
 
 // const url = "http://18.141.205.103:3001/api/v0/";
 const url = import.meta.env.VITE_API_URL + "api/v0/";
+const url2 = import.meta.env.VITE_API_URL2 + "api/v0/";
 
 export const useStore = defineStore('areas', {
   state: () => ({
     areas: [],
-    areasImage: null,
-    violationImage: null,
     searchState: [],
     areaByLocality: [],
   }),
@@ -18,12 +17,6 @@ export const useStore = defineStore('areas', {
     },
     getAreaById: (state) => (id) => {
       return state?.areaByLocality?.find(area => area?._id === id);
-    },
-    getAreasImage(state) {
-      return state.areasImage;
-    },
-    getViolationImage(state) {
-      return state.violationImage;
     },
     getSearch(state) {
       return state.searchState;
@@ -68,47 +61,6 @@ export const useStore = defineStore('areas', {
       }
     },
 
-    async getAreaImage() {
-      try {
-        const response = await axios.get(url + "images");
-        this.areasImage = response.data;
-        return response.data;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    async getAreaImageByLocality(area) {
-      try {
-        const response = await axios.get(url + "images/" + area);
-        this.areasImage = response.data;
-        return response.data;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    async getViolationsImage() {
-      try {
-        const response = await axios.get(url + "violation");
-        this.violationImage = response.data;
-        console.log(response.data, 'store Violation image');
-        return response.data;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    async getViolationsImageByLocality(area) {
-      try {
-        const response = await axios.get(url + "violation/" + area);
-        this.violationImage = response.data;
-        return response.data;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
     async searchArea(payload) {
       try {
         console.log(payload, 'payload');
@@ -119,6 +71,15 @@ export const useStore = defineStore('areas', {
         const response = await axios.get(url + "search?" + payloadString);
         this.searchState = response.data;
         return response.data;
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    async downloadAreaImage() {
+      try {
+        await axios.get(url2 + "upload");
+        return 'success'
       } catch (error) {
         console.log(error)
       }

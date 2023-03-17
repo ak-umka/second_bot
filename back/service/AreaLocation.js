@@ -53,27 +53,6 @@ class AreaServiceLocation {
                     }
                     await areas[i].save();
                 }
-                // const formattedAddress = response.data.results[0].formatted_address;
-                // areas[i].fullLocation.formatted_address = formattedAddress;
-                // for (let j = 0; j < response.data.results[0].address_components.length; j++) {
-                //     const addressComponent = response.data.results[0].address_components[j];
-                //     if (addressComponent.types[0] === 'administrative_area_level_2') {
-                //         areas[i].fullLocation.administrative_area_level_2 = addressComponent.long_name;
-                //     }
-                //     if (addressComponent.types[0] === 'locality') {
-                //         areas[i].fullLocation.locality = addressComponent.long_name;
-                //     }
-                //     if (addressComponent.types[0] === 'political') {
-                //         areas[i].fullLocation.political = addressComponent.long_name;
-                //     }
-                //     if (addressComponent.types[0] === 'route') {
-                //         areas[i].fullLocation.route = addressComponent.long_name;
-                //     }
-                //     if (addressComponent.types[0] === 'street_number') {
-                //         areas[i].fullLocation.street_number = addressComponent.long_name;
-                //     }
-                // }
-                // await areas[i].save();
             }
             return areas;
         } catch (error) {

@@ -1,18 +1,15 @@
 <template>
-  <div>
-    <Info v-if="areas" :areas="areas" />
+    <div>
+        <Info v-if="areas" :areas="areas" />
 
-    <div class="mt-8" />
+        <div class="mt-8" />
 
-    <div class="grid grid-cols-5 gap-5">
-      <div v-for="region in regions" :key="region">
-        <MoleculaCard
-          :title="region.name"
-          :image="region.image"
-        />
-      </div>
+        <div class="grid grid-cols-5 gap-5">
+            <div v-for="region in regions" :key="region">
+                <MoleculaCard :title="region.name" :image="region.image" />
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -25,7 +22,8 @@ import { useStore } from "@/stores/areas.js";
 const store = useStore();
 
 onMounted(async () => {
-  await store.getAllAreas();
+    await store.getAllAreas();
+    await store.downloadAreaImage();
 });
 
 const areas = computed(() => store.areas);

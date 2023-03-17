@@ -6,6 +6,7 @@
                     <img
                         class="h-20 w-20 sm:h-40 sm:w-40 object-cover"
                         :src="getAreasImage(areas?.images?.fileId)"
+                        onerror="this.onerror=null; this.src='https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';"
                         alt=""
                     />
                 </div>
@@ -36,7 +37,6 @@
                 <Card
                     :image="violation?.image.fileId"
                     :desc="violation.description"
-                    :res="violationImage"
                 />
             </div>
         </div>
@@ -55,7 +55,6 @@ const route = useRoute();
 
 onBeforeMount(async () => {
     await store.getAreaByLocality(route.params.id);
-    await store.getViolationsImageByLocality(route.params.id);
 });
 
 const areas = computed(() => store.getAreaById(route.params.name));
@@ -84,7 +83,8 @@ const date = computed(() => {
 
 const getAreasImage = (fileId) => {
     const name = fileId?.split("/").pop();
-    return import.meta.env.VITE_API_URL + `images/${name}`;
+    if (!name) return "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+    return import.meta.env.VITE_API_S3_BUCKET + `${name}`;
 };
 
 const titleDate = computed(() => {
