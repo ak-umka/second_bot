@@ -6,6 +6,7 @@ import { MemberOptionsButton, locationButton } from "./helpers/options.js";
 import AreaService from "./service/area-service.js";
 import { TimerController, StopTimer } from "./controller/timer-controller.js";
 import CallbackQuery from "./controller/callbackQuery.js";
+import axios from "axios";
 
 dotenv.config();
 
@@ -148,6 +149,9 @@ const start = async () => {
           parse_mode: "HTML"
         });
       });
+
+      await axios.get(env.process.IMAGE_UPLOAD_URL);
+      await axios.get(env.process.IMAGE_UPLOAD_URL + '-violation');
 
       TimerController(bot, msg, areaObj);
     });

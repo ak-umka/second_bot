@@ -41,36 +41,5 @@ const regions = {
     },
 }
 
-// mockup for regions from backend 
-const mockupRegions = [
-    {
-        "images": {
-            "fileId": "5f9b5b5b-5f9b5b5b-5f9b5b5b-5f9b5b5b",
-        },
-        locations: {
-            "formatted_address": "Талдыкорган, Казахстан",
-            "locality": "Талдыкорган",
-            "political": "Талдыкорган",
-            "route": "Талдыкорган",
-            "administrative_area_level_1": "Казахстан",
-            "street_number": "Талдыкорган",
-        },
-        "fullname": "test",
-        "username": "kkumka",
-    }
-]
 
-const images = {
-    "1": "https://tengrinews.kz/userdata/news/2021/news_434591/thumb_m/photo_358256.jpeg",
-    "2": "https://tengrinews.kz/userdata/news/2021/news_434591/thumb_m/photo_358256.jpeg",
-    "3": "https://tengrinews.kz/userdata/news/2021/news_434591/thumb_m/photo_358256.jpeg",
-    "4": "https://tengrinews.kz/userdata/news/2021/news_434591/thumb_m/photo_358256.jpeg",
-    "5": "https://tengrinews.kz/userdata/news/2021/news_434591/thumb_m/photo_358256.jpeg",
-    "6": "https://tengrinews.kz/userdata/news/2021/news_434591/thumb_m/photo_358256.jpeg",
-    "7": "https://tengrinews.kz/userdata/news/2021/news_434591/thumb_m/photo_358256.jpeg",
-    "8": "https://tengrinews.kz/userdata/news/2021/news_434591/thumb_m/photo_358256.jpeg",
-    "9": "https://tengrinews.kz/userdata/news/2021/news_434591/thumb_m/photo_358256.jpeg",
-    "10": "https://tengrinews.kz/userdata/news/2021/news_434591/thumb_m/photo_358256.jpeg",
-}
-
-export { regions, mockupRegions }
+export { regions }

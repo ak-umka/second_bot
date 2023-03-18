@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUpdated } from "vue";
 import Info from "@/components/Info.vue";
 import MoleculaCard from "@/components/MoleculaCard.vue";
 import { regions } from "@/options/regions.js";
@@ -23,8 +23,33 @@ const store = useStore();
 
 onMounted(async () => {
     await store.getAllAreas();
-    await store.downloadAreaImage();
+    // await regionCountViolation();
 });
 
+// onUpdated(async () => {
+//     await regionCountViolation();
+// });
+
 const areas = computed(() => store.areas);
+
+// const regionCountViolation = async () => {
+//     console.log("regions", regions);
+//     // regions is object and value is object
+//     const totalMembers = [];
+
+//     for (let [key, value] of Object.entries(regions)) {
+//         const res = await store.getAreaByLocality(value.name);
+//         let total = 0;
+//         for (let i = 0; i < res.length; i++) {
+//             for (let j = 0; j < res[i].members.length; j++) {
+//                 if (res[i].members[j].count === undefined) {
+//                     res[i].members[j].count = 0;
+//                 }
+//                 total += res[i].members[j].count;
+//             }
+//         }
+//         totalMembers.push(total);
+//     }
+//     return totalMembers;
+// };
 </script>

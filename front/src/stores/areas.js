@@ -75,14 +75,5 @@ export const useStore = defineStore('areas', {
         console.log(error)
       }
     },
-
-    async downloadAreaImage() {
-      try {
-        await axios.get(url2 + "upload");
-        return 'success'
-      } catch (error) {
-        console.log(error)
-      }
-    }
   }
 })
