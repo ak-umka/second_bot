@@ -22,7 +22,6 @@
                             <th class="px-4 py-2">Улица</th>
                             <th class="px-4 py-2">Отчет</th>
                             <th class="px-4 py-2">Дата</th>
-                            <th class="px-4 py-2">Действие</th>
                         </tr>
                     </thead>
                     <tbody class="text-center text-gray-700 leading-5 text-sm bg-white">
@@ -65,19 +64,6 @@
                                 {{ generalCount(area.members) }}
                             </td>
                             <td class="border-b px-4 py-2">{{ date(area.date) }}</td>
-                            <td class="border-b px-4 py-2">
-                                <router-link :to="'/area/' + $route.params.id + '/' + area._id">
-                                    <div
-                                        class="inline-flex px-3 py-[3px] text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full"
-                                        :class="{
-                                            'bg-red-500 hover:bg-red-800':
-                                                area.violation.length > 0,
-                                        }"
-                                    >
-                                        View
-                                    </div>
-                                </router-link>
-                            </td>
                         </tr>
                     </tbody>
                 </table>

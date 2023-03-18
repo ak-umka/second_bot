@@ -1,6 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import area from "./models/area.js";
 
 import { MemberOptionsButton, locationButton } from "./helpers/options.js";
 import AreaService from "./service/area-service.js";
@@ -59,14 +60,25 @@ const start = async () => {
       bot.sendMessage(msg.chat.id, messageHelper(msg), {
         parse_mode: "HTML"
       });
-      const fullname = await bot.sendMessage(msg.chat.id, "Введите ФИО", {
+      const fullname = await bot.sendMessage(msg.chat.id, "Введите ФИО (Ксения Витальевна)", {
         reply_markup: {
           force_reply: true,
         }
       });
       bot.onReplyToMessage(msg.chat.id, fullname.message_id, async (nameMsg) => {
         const name = nameMsg.text;
+        // const regex = /^(([a-zA-Zа-яА-Я]+[\-\']?)*([a-zA-Zа-яА-Я]+)?\s)+([a-zA-Zа-яА-Я]+[\-\']?)*([a-zA-Zа-яА-Я]+)?$/
+        if (
+          name === undefined
+        ) {
+          await bot.sendMessage(msg.chat.id, "Имя не найдено, чтобы создать участок вы должны нажать на /start");
+          return;
+        }
+
+        name.toString();
+
         nameUser[msg.from.id] = name;
+
         await bot.sendMessage(msg.chat.id, `ФИО сохранено`);
         const pollingStationNumber = await bot.sendMessage(msg.chat.id, "Введите номер избирательного участка", {
           reply_markup: {
@@ -75,6 +87,15 @@ const start = async () => {
         });
         bot.onReplyToMessage(msg.chat.id, pollingStationNumber.message_id, async (nameMsg) => {
           const pollingStationNumber = nameMsg.text;
+
+          if (
+            pollingStationNumber === undefined ||
+            isNaN(pollingStationNumber)
+          ) {
+            await bot.sendMessage(msg.chat.id, "Номер избирательного участка не найден, нажмите на /start");
+            return;
+          }
+
           pollingStation[msg.from.id] = pollingStationNumber;
           await bot.sendMessage(msg.chat.id, `Номер избирательного участка сохранен`);
         });
@@ -86,7 +107,7 @@ const start = async () => {
       bot.removeTextListener(/\/members/);
       bot.removeTextListener(/\/violation/);
       bot.removeTextListener(/\/stop/);
-      areaId = {};
+      // areaId = {};
       if (!nameUser[msg.from.id]) {
         await bot.sendMessage(msg.chat.id, "Имя не найдено, чтобы создать участок вы должны нажать на /start");
         return;
@@ -95,29 +116,48 @@ const start = async () => {
       await bot.sendMessage(msg.chat.id, "Адрес участка", locationButton());
 
       bot.onText(/\/violation/, async (msg) => {
+        const areaObj = await AreaService.getAreaByChatId(msg.chat.id);
         const violation = await bot.sendMessage(msg.chat.id, "Фотогрфия отчета", {
           reply_markup: { force_reply: true },
         });
         bot.onReplyToMessage(msg.chat.id, violation.message_id, async (nameMsg) => {
           const image = nameMsg.photo || nameMsg.document;
+          if (image === undefined) {
+            await bot.sendMessage(msg.chat.id, "Изображение не найдено, нажмите на /violation");
+            return;
+          }
           const photoId = image[image.length - 1].file_id || image.file_id;
           const photoUrl = await bot.getFileLink(photoId);
 
-          await AreaService.createViolationImage(photoUrl, areaId[msg.from.id]);
           await bot.sendMessage(msg.chat.id, `Изображение сохранено`);
+
           const violationText = await bot.sendMessage(msg.chat.id, "Описание отчета", {
             reply_markup: { force_reply: true },
           });
+
           bot.onReplyToMessage(msg.chat.id, violationText.message_id, async (nameMsg) => {
             const violationText = nameMsg.text;
-            await AreaService.createViolationDescription(violationText, areaId[msg.from.id]);
+
+            if (violationText === undefined || typeof violationText !== 'string') {
+              await bot.sendMessage(msg.chat.id, "Описание не найдено, нажмите на /violation");
+              return;
+            }
+
+            const violationResp = await AreaService.createViolationImage(photoUrl, areaObj._id);
+            if (violationResp?.violation?.length > 0) {
+              await axios.get(process.env.IMAGE_UPLOAD_URL + areaObj._id);
+            }
+            await AreaService.createViolationDescription(violationText, areaObj._id);
             await bot.sendMessage(msg.chat.id, `Сохранено`);
           });
+
+
         });
       });
 
       bot.onText(/\/members/, async (msg) => {
-        bot.sendMessage(msg.chat.id, 'Нажмите на кнопку', MemberOptionsButton(areaId[msg.from.id]));
+        const areaObj = await AreaService.getAreaByChatId(msg.chat.id);
+        bot.sendMessage(msg.chat.id, 'Нажмите на кнопку', MemberOptionsButton(areaObj._id));
       })
 
       bot.onText(/\/stop/, async (msg) => {
@@ -127,13 +167,16 @@ const start = async () => {
 
     bot.on('location', async (msg) => {
       const location = msg.location;
+      if (location === undefined) {
+        await bot.sendMessage(msg.chat.id, "Адрес не найден, нажмите на /create");
+        return;
+      }
       const name = nameUser[msg.from.id];
-      const areaObj = await AreaService.createArea(name, location, msg.from.username, pollingStation[msg.from.id]);
-      areaId[msg.from.id] = areaObj._id;
-      console.log(areaId, 'areaIdlocation')
+
       await bot.sendMessage(msg.chat.id, `Адрес сохранен`, {
         parse_mode: "HTML"
       });
+
       const image = await bot.sendMessage(msg.chat.id, "Отправьте фото", {
         reply_markup: {
           force_reply: true,
@@ -142,18 +185,31 @@ const start = async () => {
 
       bot.onReplyToMessage(msg.chat.id, image.message_id, async (nameMsg) => {
         const image = nameMsg.photo || nameMsg.document;
+        if (image === undefined) {
+          await bot.sendMessage(msg.chat.id, "Фото не найдено, нажмите на /create");
+          return;
+        }
+
         const photoId = image[image.length - 1].file_id || image.file_id;
         const photoUrl = await bot.getFileLink(photoId);
-        await AreaService.createImage(photoUrl, areaObj._id);
+
+        await AreaService.createArea(name, location, msg.from.username, pollingStation[msg.from.id], msg.chat.id);
+        // areaId[msg.from.id] = areaObj._id;
+        const areaObj = await AreaService.getAreaByChatId(msg.chat.id);
+        console.log(areaObj, 'areaObj')
+
+        const imagesResp = await AreaService.createImage(photoUrl, areaObj._id);
         await bot.sendMessage(msg.chat.id, `Изображение сохранено`, {
           parse_mode: "HTML"
         });
+        console.log(imagesResp, 'imagesResp')
+
+        if (imagesResp?.images?.fileId) {
+          await axios.get(process.env.IMAGE_UPLOAD_URL + areaObj._id);
+        }
       });
 
-      await axios.get(env.process.IMAGE_UPLOAD_URL);
-      await axios.get(env.process.IMAGE_UPLOAD_URL + '-violation');
-
-      TimerController(bot, msg, areaObj);
+      TimerController(bot, msg);
     });
 
 

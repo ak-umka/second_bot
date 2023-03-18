@@ -14,6 +14,17 @@ const CallbackQuery = (bot) => {
 
     bot.onReplyToMessage(chatId, members.message_id, async (nameMsg) => {
       const countMembers = nameMsg.text;
+
+      if (
+        isNaN(countMembers) ||
+        countMembers === null ||
+        countMembers === undefined ||
+        countMembers === ''
+      ) {
+        await bot.sendMessage(chatId, "Неверный формат количества участников, нажмите на кнопку");
+        return;
+      }
+
       await AreaService.updateCountMembers(countMembers, data);
       console.log(countMembers, 'members')
       await bot.sendMessage(nameMsg.chat.id, 'Сохранено', {

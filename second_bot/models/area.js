@@ -45,6 +45,9 @@ const areaSchema = new mongoose.Schema({
     pollingStation: {
         type: Number,
     },
+    chatId: {
+        type: Number,
+    },
     // fullLocation: {},
     date: {
         type: Date,

@@ -1,7 +1,7 @@
 import Area from "../models/area.js";
 
 class AreaService {
-    async createArea(fullname, location, username, pollingStation) {
+    async createArea(fullname, location, username, pollingStation, chatId) {
         // check address is string
         // if (typeof address !== 'string' || address === '') {
         //     throw new Error('Address is not string');
@@ -10,6 +10,7 @@ class AreaService {
             fullname: fullname,
             username: username,
             pollingStation: pollingStation,
+            chatId: chatId,
         });
         area.location.latitude = location.latitude;
         area.location.longitude = location.longitude;
@@ -58,6 +59,19 @@ class AreaService {
         await area.save();
         return area;
     }
+
+    async getAreaByChatId(chatId) {
+        try {
+
+            const area = await Area.findOne({ chatId: chatId })
+                .sort({ date: -1 })
+                .exec();
+            return area;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
 }
 
