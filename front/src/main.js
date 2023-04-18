@@ -17,7 +17,7 @@ app.use(router)
 app.use(VueApexCharts)
 app.use(VueGoogleMaps, {
     load: {
-        key: 'AIzaSyDgluaiOZMtRh3V3H-KL8hfShtE2VH6_1k',
+        key: 'xxxxxxxxxx',
         libraries: 'places',
     },
 })
